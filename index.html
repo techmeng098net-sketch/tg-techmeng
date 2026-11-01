@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ចុច ២៥ ដង</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff5f7;--fg:#3a1f2b;--accent:#e63977;--muted:#8a6a76;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1c1217;--fg:#fbe9f0;--accent:#ff5c97;--muted:#b995a5}}
+:root[data-theme="dark"]{--bg:#1c1217;--fg:#fbe9f0;--accent:#ff5c97;--muted:#b995a5}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:"Noto Sans Khmer",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;padding:20px;box-sizing:border-box;user-select:none;-webkit-user-select:none}
+#pic{font-size:min(45vw,180px);line-height:1.1;cursor:pointer;transition:transform .08s;-webkit-tap-highlight-color:transparent}
+#meme{font-size:3rem;min-height:3.5rem}
+#pic:active{transform:scale(.92)}
+#count{font-size:1.4rem;color:var(--muted)}
+#msg{font-size:1.8rem;font-weight:700;color:var(--accent);min-height:3rem;line-height:1.5}
+.pop{animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+#credit{display:none;font-size:1rem;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-top:6px}
+.fall{position:fixed;top:-50px;font-size:2rem;pointer-events:none;animation:fall linear forwards;z-index:5}
+@keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
+.shake{animation:shake .4s 4}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px) rotate(-1deg)}75%{transform:translateX(12px) rotate(1deg)}}
+button{font:inherit;border:0;background:var(--accent);color:#fff;padding:10px 22px;border-radius:999px;cursor:pointer;display:none}
+</style>
+</head>
+<body>
+<div id="pic" role="button" aria-label="ចុចលើរូប">🙂</div>
+<div id="count">ចុច: 0 / 50</div>
+<div id="msg"></div>
+<div id="meme"></div>
+<div id="credit">make by techmeng</div>
+<button id="reset">ចាប់ផ្តើមឡើងវិញ</button>
+<script>
+var TARGET=50,n=0,done=false;
+var pic=document.getElementById('pic'),count=document.getElementById('count'),msg=document.getElementById('msg'),reset=document.getElementById('reset'),meme=document.getElementById('meme');
+var credit=document.getElementById('credit');
+function laugh(){
+  try{
+    var C=window.AudioContext||window.webkitAudioContext,ctx=new C();
+    for(var i=0;i<6;i++){
+      var t=ctx.currentTime+i*0.22,o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(420-i*25,t);
+      o.frequency.exponentialRampToValueAtTime(260-i*15,t+0.15);
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.25,t+0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.18);
+      o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+0.2);
+    }
+  }catch(e){}
+  try{var u=new SpeechSynthesisUtterance('ha ha ha ha ha');u.lang='en-US';u.rate=1.3;speechSynthesis.speak(u);}catch(e){}
+}
+function boom(){
+  var E=['😂','🤣','😆','🎉','✨'];
+  for(var i=0;i<45;i++){
+    var s=document.createElement('span');
+    s.className='fall';
+    s.textContent=E[i%E.length];
+    s.style.left=(Math.random()*95)+'vw';
+    s.style.animationDuration=(2+Math.random()*2.5)+'s';
+    s.style.animationDelay=(Math.random()*1.2)+'s';
+    document.body.appendChild(s);
+    (function(el){setTimeout(function(){el.remove();},6000);})(s);
+  }
+  document.body.classList.add('shake');
+  setTimeout(function(){document.body.classList.remove('shake');},1700);
+}
+pic.addEventListener('click',function(){
+  if(done)return;
+  n++;
+  count.textContent='ចុច: '+n+' / '+TARGET;
+  if(n===25){msg.textContent='ខំប្រឹងឡើង! 💪';msg.className='';void msg.offsetWidth;msg.className='pop';}
+  if(n>=TARGET){
+    done=true;
+    laugh();boom();
+    credit.style.display='block';credit.className='pop';
+    msg.textContent='ចុចនិងគេមកវិញអត់?';
+    msg.className='pop';
+    pic.textContent='🤣';
+    meme.textContent='😂🤣😂';
+    meme.className='pop';
+    reset.style.display='inline-block';
+  }
+});
+reset.addEventListener('click',function(){
+  n=0;done=false;
+  count.textContent='ចុច: 0 / '+TARGET;
+  msg.textContent='';msg.className='';
+  pic.textContent='🙂';
+  meme.textContent='';meme.className='';
+  credit.style.display='none';credit.className='';
+  reset.style.display='none';
+});
+</script>
+</body>
+</html>
